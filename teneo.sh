@@ -6,14 +6,12 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # 색상 초기화
 
-echo -e "${GREEN}soniclabs 봇을 설치합니다.${NC}"
+echo -e "${GREEN}teneo 봇을 설치합니다.${NC}"
 echo -e "${GREEN}스크립트작성자: https://t.me/kjkresearch${NC}"
-echo -e "${GREEN}출처: https://github.com/web3bothub/soniclabs-arcade-bot${NC}"
 
 echo -e "${GREEN}옵션을 선택하세요:${NC}"
-echo -e "${YELLOW}1. Soniclabs 봇 새로 설치${NC}"
+echo -e "${YELLOW}1. teneo 봇 새로 설치${NC}"
 echo -e "${YELLOW}2. 기존정보 그대로 이용하기(재실행)${NC}"
-echo -e "${YELLOW}3. Soniclabs 봇 업데이트${NC}"
 read -p "선택: " choice
 
 case $choice in
@@ -28,11 +26,11 @@ case $choice in
     # GitHub에서 코드 복사
     [ -d "/root/soniclabs-arcade-bot" ] && rm -rf /root/soniclabs-arcade-bot
     echo -e "${YELLOW}GitHub에서 코드 복사 중...${NC}"
-    git clone https://github.com/web3bothub/soniclabs-arcade-bot.git
+    git clone https://github.com/airdropinsiders/Teneo-Bot.git
 
     # 작업 공간 생성 및 이동
     echo -e "${YELLOW}작업 공간 이동 중...${NC}"
-    cd /root/soniclabs-arcade-bot
+    cd /root/Teneo-Bot
 
     echo -e "${YELLOW}Node.js LTS 버전을 설치하고 설정 중...${NC}"
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
@@ -41,7 +39,6 @@ case $choice in
     nvm install --lts
     nvm use --lts
     npm install
-    cp -r accounts/accounts_tmp.js accounts/accounts.js && cp -r config/proxy_list_tmp.js config/proxy_list.js
 
     # 사용자 정보 입력
     echo -e "${GREEN}사용자 정보를 입력받습니다.${NC}"
@@ -53,49 +50,54 @@ case $choice in
     read -p "같은 지갑을 연결하시고 Step2에서 faucet을 또 받아주세요 (트위터계정필요)"
     read -p "우측 상단에 표시되는 지갑주소가 스마트월렛이 됩니다."
     read -p "Plinko, Mine, Wheel 게임을 최초 한번씩만 플레이를 해주세요"
-    
-    # 사용자로부터 계정 정보 입력받기
-    read -p "프라이빗키를 입력하세요 (쉼표로 구분): " account
-    read -p "스마트 월렛 주소를 입력하세요 (쉼표로 구분): " wallet_addresses
-    
-    # IFS 설정 후 배열 초기화
-    IFS=',' read -r -a private_keys <<< "$account"
-    IFS=',' read -r -a smart_wallet_addresses <<< "$wallet_addresses"
-    
-    # .env 파일에 프라이빗키와 스마트 월렛 주소 저장
+
+    # 사용자로부터 이메일과 패스워드 입력받기
+    read -p "이메일을 입력하세요 (쉼표로 구분): " emails
+    read -p "패스워드를 입력하세요 (쉼표로 구분): " passwords
+
+    # 이메일과 패스워드를 배열로 변환
+    IFS=',' read -r -a email_array <<< "$emails"
+    IFS=',' read -r -a password_array <<< "$passwords"
+
+    # 이메일과 패스워드를 객체 배열로 변환
+    accountLists=()
+    for i in "${!email_array[@]}"; do
+        accountLists+=("{ email: \"${email_array[i]}\", password: \"${password_array[i]}\" }")
+    done
+
+    # 결과를 accounts.js 파일에 저장
     {
-        echo "PRIVATE_KEYS=${private_keys[*]}"
-        echo "SMART_WALLET_ADDRESS=${smart_wallet_addresses[*]}"
-    } > /root/soniclabs-arcade-bot/.env
-    
+        echo "export const accountLists = ["
+        for account in "${accountLists[@]}"; do
+            echo "    $account,"
+        done
+        echo "];"
+    } > /root/Teneo-Bot/accounts/accounts.js
+
     # 프록시 정보 입력 안내
-    echo -e "${RED}Civil을 피하기 위해 각 프라이빗키마다 하나씩 프록시가 필요합니다.${NC}"
     echo -e "${YELLOW}프록시 정보를 입력하세요. 입력형식: http://proxyUser:proxyPass@IP:Port${NC}"
     echo -e "${YELLOW}여러 개의 프록시는 쉼표로 구분하세요.${NC}"
-    echo -e "${YELLOW}프록시가 없다면 VPS IP로만 이용하게됩니다. 입력형식: http://root:패스워드@VPS IP:VPS port${NC}"
     echo -e "${YELLOW}챗GPT를 이용해서 형식을 변환해달라고 하면 됩니다.${NC}"
     read -p "프록시 정보를 입력하시고 엔터를 누르세요: " proxies
     
-    # .env 파일에 프록시 정보 추가
-    echo "PROXIES=$proxies" >> /root/soniclabs-arcade-bot/.env
-    
-    # 필수 진행단계 안내   
+    # 프록시를 배열로 변환
+    IFS=',' read -r -a proxy_array <<< "$proxies"
+
+    # 결과를 proxy_list.js 파일에 저장
+    {
+        echo "export const proxyList = ["
+        for proxy in "${proxy_array[@]}"; do
+            echo "    \"$proxy\","
+        done
+        echo "];"
+    } > /root/Teneo-Bot/config/proxy_list.js
+
+    # 봇구동
     npm run start
     ;;
   2)
-    echo -e "${GREEN}Soniclabs를 재실행합니다.${NC}"
-    cd /root/soniclabs-arcade-bot
-    export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # nvm을 로드합니다
-    npm run start
-    ;;
-  3)
-    echo -e "${GREEN}Soniclabs를 업데이트합니다.${NC}"
-    cd /root/soniclabs-arcade-bot
-    git pull
-    git pull --rebase
-    git stash && git pull
-    npm update
+    echo -e "${GREEN}봇을 재실행합니다.${NC}"
+    cd /root/Teneo-Bot
     export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # nvm을 로드합니다
     npm run start
@@ -104,3 +106,4 @@ case $choice in
     echo -e "${RED}잘못된 선택입니다. 다시 시도하세요.${NC}"
     ;;
 esac
+
