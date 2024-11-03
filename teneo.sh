@@ -67,7 +67,7 @@ case $choice in
             echo "    $account,"
         done
         echo "];"
-    } > /root/Teneo-Bot/accounts/accounts.js
+    } > /root/teneo_base/accounts/accounts.js
 
     # 프록시 정보 입력 안내
     echo -e "${YELLOW}프록시 정보를 입력하세요. 입력형식: http://proxyUser:proxyPass@IP:Port${NC}"
@@ -85,9 +85,9 @@ case $choice in
             echo "    \"$proxy\","
         done
         echo "];"
-    } > /root/Teneo-Bot/config/proxy_list.js
+    } > /root/teneo_base/config/proxy_list.js
 
-    cp /root/Teneo-Bot/app/config/config_tmp.js /root/Teneo-Bot/app/config/config.js
+    cp /root/teneo_base/app/config/config_tmp.js /root/teneo_base/app/config/config.js
 
     # 봇구동
     npm run start
