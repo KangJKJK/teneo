@@ -19,17 +19,17 @@ case $choice in
     echo -e "${GREEN}teneo 를 새로 설치합니다.${NC}"
     # 파이썬 및 필요한 패키지 설치
     echo -e "${YELLOW}시스템 업데이트 및 필수 패키지 설치 중...${NC}"
-    rm -rf /root/Teneo-Bot
+    rm -rf /root/teneo_base
     sudo apt update
     sudo apt install -y git
 
     # GitHub에서 코드 복사
     echo -e "${YELLOW}GitHub에서 코드 복사 중...${NC}"
-    git clone https://github.com/airdropinsiders/Teneo-Bot.git
+    git clone https://github.com/KangJKJK/teneo_base.git
 
     # 작업 공간 생성 및 이동
     echo -e "${YELLOW}작업 공간 이동 중...${NC}"
-    cd /root/Teneo-Bot
+    cd /root/teneo_base
 
     echo -e "${YELLOW}Node.js LTS 버전을 설치하고 설정 중...${NC}"
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
@@ -43,7 +43,6 @@ case $choice in
     echo -e "${GREEN}사용자 정보를 입력받습니다.${NC}"
 
     echo -e "${GREEN}봇을 실행하기전에 다음 단계들이 필수적으로 필요합니다. 진행하신 후 엔터를 눌러주세요.${NC}"
-    read -p "초대코드가 자동으로 입력되니 미리 가입을 진행하세요."
     read -p "다음 사이트로 이동하여 어플을 받아주세요: https://chromewebstore.google.com/detail/teneo-community-node/emcclcoaglgcpoognfiggmhnhgabppkm"
     read -p "가입을 진행하신 후 셀퍼럴을 진행하시거나 해당 코드를 입력해 주세요: Z5N0r"
 
@@ -95,7 +94,7 @@ case $choice in
     ;;
   2)
     echo -e "${GREEN}봇을 재실행합니다.${NC}"
-    cd /root/Teneo-Bot
+    cd /root/teneo_base
     export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # nvm을 로드합니다
     npm run start
