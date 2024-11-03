@@ -88,6 +88,8 @@ case $choice in
         echo "];"
     } > /root/Teneo-Bot/config/proxy_list.js
 
+    cp /root/Teneo-Bot/app/config/config_tmp.js /root/Teneo-Bot/app/config/config.js
+
     # 봇구동
     npm run start
     ;;
