@@ -16,15 +16,14 @@ read -p "선택: " choice
 
 case $choice in
   1)
-    echo -e "${GREEN}Soniclabs를 새로 설치합니다.${NC}"
+    echo -e "${GREEN}teneo 를 새로 설치합니다.${NC}"
     # 파이썬 및 필요한 패키지 설치
     echo -e "${YELLOW}시스템 업데이트 및 필수 패키지 설치 중...${NC}"
-    rm -rf /root/soniclabs-arcade-bot
+    rm -rf /root/Teneo-Bot
     sudo apt update
     sudo apt install -y git
 
     # GitHub에서 코드 복사
-    [ -d "/root/soniclabs-arcade-bot" ] && rm -rf /root/soniclabs-arcade-bot
     echo -e "${YELLOW}GitHub에서 코드 복사 중...${NC}"
     git clone https://github.com/airdropinsiders/Teneo-Bot.git
 
