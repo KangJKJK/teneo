@@ -87,8 +87,6 @@ case $choice in
         echo "];"
     } > /root/teneo_base/config/proxy_list.js
 
-    cp /root/teneo_base/app/config/config_tmp.js /root/teneo_base/app/config/config.js
-
     # 봇구동
     npm run start
     ;;
