@@ -68,15 +68,18 @@ case $choice in
         done
         echo "];"
     } > /root/teneo_base/accounts/accounts.js
-
+  
     # 프록시 정보 입력 안내
     echo -e "${YELLOW}프록시 정보를 입력하세요. 입력형식: http://proxyUser:proxyPass@IP:Port${NC}"
-    echo -e "${YELLOW}여러 개의 프록시는 쉼표로 구분하세요.${NC}"
-    echo -e "${YELLOW}챗GPT를 이용해서 형식을 변환해달라고 하면 됩니다.${NC}"
-    read -p "프록시 정보를 입력하시고 엔터를 누르세요: " proxies
-    
+    echo -e "${YELLOW}여러 개의 프록시는 줄바꿈으로 구분하세요.${NC}"
+    echo -e "${YELLOW}입력을 마치려면 엔터를 두 번 누르세요.${NC}"
+
     # 프록시를 배열로 변환
-    IFS=',' read -r -a proxy_array <<< "$proxies"
+    proxy_array=()
+    while IFS= read -r line; do
+        [[ -z "$line" ]] && break
+        proxy_array+=("$line")
+    done
 
     # 결과를 proxy_list.js 파일에 저장
     {
@@ -85,8 +88,8 @@ case $choice in
             echo "    \"$proxy\","
         done
         echo "];"
-    } > /root/teneo_base/config/proxy_list.js
-
+    } > /root/teneo_base/config/proxy_list.js 
+    
     # 봇구동
     npm run start
     ;;
