@@ -67,7 +67,7 @@ case $choice in
     for i in "${!emails[@]}"; do  # 수정된 부분
         accountLists+=("{ email: \"${emails[i]}\", password: \"${passwords[i]}\" }")  # 수정된 부분
     done
-    
+
     # 결과를 accounts.js 파일에 저장
     {
         echo "export const accountLists = ["
@@ -76,15 +76,6 @@ case $choice in
         done
         echo "];"
     } > /root/teneo_base/accounts/accounts.js
-
-    # 이메일과 패스워드를 YAML 형식으로 저장
-    {
-        echo "accounts:"
-        for i in "${!email_array[@]}"; do
-            echo "  - email: ${email_array[i]}:${password_array[i]}"
-            echo "    proxy: http://proxyUser:proxyPass@proxyHost:proxyPort"
-        done
-    } > /root/teneo_base/accounts/accounts.yaml
 
     # 프록시 정보 입력 안내
     echo -e "${YELLOW}프록시 정보를 입력하세요. 입력형식: http://proxyUser:proxyPass@IP:Port${NC}"
@@ -106,6 +97,15 @@ case $choice in
         done
         echo "];"
     } > /root/teneo_base/config/proxy_list.js 
+
+    # 이메일과 패스워드를 YAML 형식으로 저장
+    {
+        echo "accounts:"
+        for i in "${!email_array[@]}"; do
+            echo "  - email: ${email_array[i]}:${password_array[i]}"
+            echo "    proxy: ${proxy_array[i]}" 
+        done
+    } > /root/teneo_base/accounts/accounts.yaml
     
     # 봇구동
     npm run start
@@ -121,4 +121,5 @@ case $choice in
     echo -e "${RED}잘못된 선택입니다. 다시 시도하세요.${NC}"
     ;;
 esac
+
 
