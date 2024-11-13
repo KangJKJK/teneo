@@ -47,19 +47,26 @@ case $choice in
     read -p "가입을 진행하신 후 셀퍼럴을 진행하시거나 해당 코드를 입력해 주세요: Z5N0r"
 
     # 사용자로부터 이메일과 패스워드 입력받기
-    read -p "이메일을 입력하세요 (쉼표로 구분): " emails
-    read -p "패스워드를 입력하세요 (쉼표로 구분): " passwords
-
-    # 이메일과 패스워드를 배열로 변환
-    IFS=',' read -r -a email_array <<< "$emails"
-    IFS=',' read -r -a password_array <<< "$passwords"
-
+    echo -e "${YELLOW}이메일을 입력하세요 (줄바꿈으로 구분). 입력을 마치려면 엔터를 두 번 누르세요.${NC}"
+    emails=()
+    while IFS= read -r line; do
+        [[ -z "$line" ]] && break
+        emails+=("$line")
+    done
+    
+    echo -e "${YELLOW}패스워드를 입력하세요 (줄바꿈으로 구분). 입력을 마치려면 엔터를 두 번 누르세요.${NC}"
+    passwords=()
+    while IFS= read -r line; do
+        [[ -z "$line" ]] && break
+        passwords+=("$line")
+    done
+            
     # 이메일과 패스워드를 객체 배열로 변환
     accountLists=()
-    for i in "${!email_array[@]}"; do
-        accountLists+=("{ email: \"${email_array[i]}\", password: \"${password_array[i]}\" }")
+    for i in "${!emails[@]}"; do  # 수정된 부분
+        accountLists+=("{ email: \"${emails[i]}\", password: \"${passwords[i]}\" }")  # 수정된 부분
     done
-
+    
     # 결과를 accounts.js 파일에 저장
     {
         echo "export const accountLists = ["
@@ -68,7 +75,16 @@ case $choice in
         done
         echo "];"
     } > /root/teneo_base/accounts/accounts.js
-  
+
+    # 이메일과 패스워드를 YAML 형식으로 저장
+    {
+        echo "accounts:"
+        for i in "${!email_array[@]}"; do
+            echo "  - email: ${email_array[i]}:${password_array[i]}"
+            echo "    proxy: http://proxyUser:proxyPass@proxyHost:proxyPort"
+        done
+    } > /root/teneo_base/accounts/accounts.yaml
+
     # 프록시 정보 입력 안내
     echo -e "${YELLOW}프록시 정보를 입력하세요. 입력형식: http://proxyUser:proxyPass@IP:Port${NC}"
     echo -e "${YELLOW}여러 개의 프록시는 줄바꿈으로 구분하세요.${NC}"
