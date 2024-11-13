@@ -37,6 +37,7 @@ case $choice in
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # nvm을 로드합니다
     nvm install --lts
     nvm use --lts
+    npm install ws
     npm install
 
     # 사용자 정보 입력
